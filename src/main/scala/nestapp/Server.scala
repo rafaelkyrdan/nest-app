@@ -11,6 +11,7 @@ import spray.http._
 import HttpMethods._
 import MediaTypes._
 import spray.can.Http.RegisterChunkHandler
+import java.util.Properties
 
 /**
   * TODO: Add documentation
@@ -20,6 +21,11 @@ import spray.can.Http.RegisterChunkHandler
 class Server extends Actor with ActorLogging {
   implicit val timeout: Timeout = 1.second // for the actor 'asks'
   import context.dispatcher // ExecutionContext for the futures and scheduler
+
+  val props = new Properties()
+  props.load(this.getClass.getClassLoader.getResourceAsStream("credentials.txt"))
+  val firebaseURL = props.getProperty("firebase-url")
+  val nestToken = props.getProperty("nest-token")
 
   def receive = {
     // when a new connection comes in we register ourselves as the connection handler
@@ -33,7 +39,8 @@ class Server extends Actor with ActorLogging {
 
     case HttpRequest(GET, Uri.Path("/stream"), _, _, _) =>
       val peer = sender // since the Props creator is executed asyncly we need to save the sender ref
-      context actorOf Props(new Streamer(peer, 25))
+      //context actorOf Props(new Streamer(peer, 25))
+      context actorOf Props(new MyTopActor(firebaseURL, nestToken, peer))
 
     case HttpRequest(GET, Uri.Path("/server-stats"), _, _, _) =>
       val client = sender
@@ -125,6 +132,8 @@ class Server extends Actor with ActorLogging {
       </html>.toString()
     )
   )
+
+  //new MyTopActor(firebaseURL, nestToken)
 
   class Streamer(client: ActorRef, count: Int) extends Actor with ActorLogging {
     log.debug("Starting streaming response ...")
