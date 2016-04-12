@@ -29,13 +29,27 @@ import spray.can.Http
 //}
 
 
-object Main extends App {
+//object Main extends App {
+//
+//  implicit val system = ActorSystem()
+//
+//  // the handler actor replies to incoming HttpRequests
+//  val handler = system.actorOf(Props[Server], name = "handler")
+//
+//  IO(Http) ! Http.Bind(handler, interface = "localhost", port = 8080)
+//}
 
-  implicit val system = ActorSystem()
+object Main {
+  def main(args: Array[String]) {
+    val props = new Properties()
+    props.load(this.getClass.getClassLoader.getResourceAsStream("credentials.txt"))
+    val firebaseURL = props.getProperty("firebase-url")
+    val nestToken = props.getProperty("nest-token")
 
-  // the handler actor replies to incoming HttpRequests
-  val handler = system.actorOf(Props[Server], name = "handler")
+    val system = ActorSystem("mySystem")
+    system.actorOf(Props(new MyTopActor(firebaseURL, nestToken)))
 
-  IO(Http) ! Http.Bind(handler, interface = "localhost", port = 8080)
+  }
 }
+
 
