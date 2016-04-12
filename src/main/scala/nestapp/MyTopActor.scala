@@ -15,8 +15,6 @@ import HttpMethods._
 import MediaTypes._
 import akka.io.IO
 import spray.can.Http.RegisterChunkHandler
-import spray.can.websocket.FrameCommandFailed
-import spray.can.websocket.examples.SimpleServer.{Push, PushToChildren}
 import spray.can.websocket.frame.{BinaryFrame, TextFrame}
 import spray.routing.HttpServiceActor
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorRefFactory, ActorSystem, Props}
@@ -27,10 +25,8 @@ import spray.can.websocket
 import spray.can.websocket.frame.{BinaryFrame, TextFrame}
 import spray.http.HttpRequest
 import spray.can.websocket.FrameCommandFailed
-import spray.can.websocket.examples.SimpleServer.{Push, PushToChildren}
 
 
-import scala.concurrent.duration.span
 
 
 case class StructureUpdate(name: String, state: String)
@@ -59,23 +55,6 @@ class MyTopActor(firebaseURL: String, nestToken: String) extends Actor with Acto
 
 }
 
-//class MyTopActor(firebaseURL: String, nestToken: String, client: ActorRef) extends Actor with ActorLogging {
-//  import context.dispatcher
-//  val nestActor = context.actorOf(NestActor.props(nestToken, firebaseURL))
-//
-//  client ! ChunkedResponseStart(HttpResponse(entity = " " * 2048)).withAck(Ok(10))
-//
-//  def receive = {
-//    case upd:StructureUpdate => client ! MessageChunk(upd.toString)
-//    case upd:DeviceStateUpdate => client ! MessageChunk(upd.toString)
-//    case eta:ETA => nestActor ! eta
-//    case eta:ETAAck => println("top actor got ETAAck " + eta)
-//    case m => client ! MessageChunk(m.toString)
-//  }
-//
-//  case class Ok(remaining: Int)
-//}
-
 class WebSocketServer extends Actor with ActorLogging {
   def receive = {
     // when a new connection comes in we register a WebSocketConnection actor as the per connection handler
@@ -89,6 +68,9 @@ class WebSocketServer extends Actor with ActorLogging {
       children.foreach(ref => ref ! Push(msg))
   }
 }
+
+final case class Push(msg: String)
+final case class PushToChildren(msg: String)
 
 object WebSocketWorker {
   def props(serverConnection: ActorRef) = Props(classOf[WebSocketWorker], serverConnection)
