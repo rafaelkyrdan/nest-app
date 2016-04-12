@@ -8,7 +8,7 @@ import spray.http.HttpRequest
 import spray.routing.HttpServiceActor
 
 /**
-  * TODO:documentation
+  * Actor which acts as WebSocket, handler for each connection
   */
 
 class WebSocketWorker(val serverConnection: ActorRef) extends HttpServiceActor with websocket.WebSocketServerWorker {
@@ -16,14 +16,9 @@ class WebSocketWorker(val serverConnection: ActorRef) extends HttpServiceActor w
 
   def businessLogic: Receive = {
     // just bounce frames back for Autobahn testsuite
-    case x @ (_: BinaryFrame | _: TextFrame) =>
-      sender() ! x
-
+    case x@(_: BinaryFrame | _: TextFrame) => sender() ! x
     case Push(msg) => send(TextFrame(msg))
-
-    case x: FrameCommandFailed =>
-      log.error("frame command failed", x)
-
+    case x: FrameCommandFailed => log.error("frame command failed", x)
     case x: HttpRequest => // do something
   }
 

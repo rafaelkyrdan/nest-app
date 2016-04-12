@@ -4,7 +4,8 @@ import akka.actor.{Actor, ActorLogging, Props}
 import spray.can.Http
 
 /**
-  * TODO:documentation
+  * Actor which acts as simple WebSocketServer
+  * For documentation look spray.io and spray-websocket
   */
 
 class WebSocketServer extends Actor with ActorLogging {
