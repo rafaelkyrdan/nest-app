@@ -1,30 +1,29 @@
 package nestapp.nest
 
 /**
-  * While I'm using the nestlab's example I should put their license.
-  * I'm gonna write my own Actor for it
+  * Nest Actor which I get from Nest's examples for developers
+  *
   */
 
 /**
-  *  Copyright 2014 Nest Labs Inc. All Rights Reserved.
+  * Copyright 2014 Nest Labs Inc. All Rights Reserved.
   *
-  *  Licensed under the Apache License, Version 2.0 (the "License");
-  *  you may not use this file except in compliance with the License.
-  *  You may obtain a copy of the License at
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
   *
-  *        http://www.apache.org/licenses/LICENSE-2.0
+  * http://www.apache.org/licenses/LICENSE-2.0
   *
-  *  Unless required by applicable law or agreed to in writing, software
-  *  distributed under the License is distributed on an "AS IS" BASIS,
-  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  *  See the License for the specific language governing permissions and
-  *  limitations under the License.
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
   */
 
 import akka.actor.{Actor, Props}
 import com.firebase.client.Firebase.{AuthListener, CompletionListener}
 import com.firebase.client.{DataSnapshot, Firebase, FirebaseError, ValueEventListener}
-import nestapp.{DeviceStateUpdate, ETA, ETAAck, StructureUpdate}
 
 import scala.collection.mutable.HashMap
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -55,6 +54,7 @@ class NestActor(nestToken: String, firebaseURL: String) extends Actor {
     def onAuthError(e: FirebaseError) {
       println("fb auth error: " + e)
     }
+
     def onAuthSuccess(a: AnyRef) {
       println("fb auth success: " + a)
       // when we've successfully authed, add a change listener to the whole tree
@@ -71,13 +71,14 @@ class NestActor(nestToken: String, firebaseURL: String) extends Actor {
         }
       })
     }
+
     def onAuthRevoked(e: FirebaseError) {
       println("fb auth revoked: " + e)
     }
   })
 
   def receive = {
-    case e:ETA => {
+    case e: ETA => {
       setEta(e.copy(acked = true))
       if (!e.acked) {
         context.parent ! ETAAck(e)
@@ -194,10 +195,10 @@ class NestActor(nestToken: String, firebaseURL: String) extends Actor {
         if (structureStates(structName).contains("away")) {
           val etaRef = fb.child("structures").child(structId).child("eta")
           val arrival = (System.currentTimeMillis() + eta.eta * 1000 * 60).toString
-          val m = Map (
+          val m = Map(
             "trip_id" -> eta.tripID,
             "estimated_arrival_window_begin" -> arrival,
-            "estimated_arrival_window_end"  -> arrival
+            "estimated_arrival_window_end" -> arrival
           )
           println("setting eta " + m)
           import scala.collection.JavaConversions.mapAsJavaMap

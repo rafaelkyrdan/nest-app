@@ -1,27 +1,23 @@
 package nestapp
 
 /**
-  * TODO: Add documentation
+  * It is a main actor in the app.
+  * Main functionality:
+  * - set up WebSocketServer
+  * - create Nest actor
+  * Listens to messages from Nest
+  * When messages comes - sends ti to all followers connected via WebSocketServer.
   */
 
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props, _}
 import akka.io.IO
-import nestapp.nest.NestActor
+import nestapp.nest._
 import nestapp.websocketserver.{PushToChildren, WebSocketServer}
 import spray.can.Http
 import spray.can.server.UHttp
 
 
-case class StructureUpdate(name: String, state: String)
-
-case class DeviceStateUpdate(structure: String, deviceType: String, location: String, statusType: String, status: String)
-
-case class ETA(sender: Long, tripID: String, eta: Int, acked: Boolean = false)
-
-case class ETAAck(eta: ETA)
-
-
-class MyTopActor(firebaseURL: String, nestToken: String) extends Actor with ActorLogging {
+class AppActor(firebaseURL: String, nestToken: String) extends Actor with ActorLogging {
 
   val nestActor = context.actorOf(NestActor.props(nestToken, firebaseURL))
   val server = context.actorOf(Props(classOf[WebSocketServer]))
@@ -33,7 +29,7 @@ class MyTopActor(firebaseURL: String, nestToken: String) extends Actor with Acto
     case upd: DeviceStateUpdate => println(upd); server ! PushToChildren(upd.toString)
     case eta: ETA => nestActor ! eta
     case eta: ETAAck => println("top actor got ETAAck " + eta)
-    case m => println(0, m)
+    case m => log.info(m.toString)
   }
 
 }

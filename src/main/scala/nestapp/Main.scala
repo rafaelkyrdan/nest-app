@@ -1,13 +1,13 @@
 package nestapp
 
 /**
-  * TODO: Add documentation
+  * Nest App
+  * Example of server-to-server integration between Nest and WebSocketServer.
+  * App listens on messages from Nest and sends it to all followers connected to WebSocketServer
   */
 
 import java.util.Properties
 import akka.actor.{ActorSystem, Props}
-import akka.io.IO
-import spray.can.Http
 
 object Main {
   def main(args: Array[String]) {
@@ -17,7 +17,7 @@ object Main {
     val nestToken = props.getProperty("nest-token")
 
     val system = ActorSystem("mySystem")
-    system.actorOf(Props(new MyTopActor(firebaseURL, nestToken)))
+    system.actorOf(Props(new AppActor(firebaseURL, nestToken)))
 
   }
 }
