@@ -15,7 +15,6 @@ libraryDependencies ++= Seq (
   "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13"
 )
 
-//libraryDependencies += "io.spray" % "spray-can" % "1.1.3" // versions 1.1.x and 1.2.x
 libraryDependencies += "io.spray" %% "spray-can" % "1.3.3"
 libraryDependencies += "com.wandoulabs.akka" %% "spray-websocket" % "0.1.4"
 
