@@ -1,8 +1,8 @@
-package nestapp
+package nestapp.nest
 
 /**
   * While I'm using the nestlab's example I should put their license.
-  * I'm gonna write my own Actor then I'll change file
+  * I'm gonna write my own Actor for it
   */
 
 /**
@@ -24,6 +24,7 @@ package nestapp
 import akka.actor.{Actor, Props}
 import com.firebase.client.Firebase.{AuthListener, CompletionListener}
 import com.firebase.client.{DataSnapshot, Firebase, FirebaseError, ValueEventListener}
+import nestapp.{DeviceStateUpdate, ETA, ETAAck, StructureUpdate}
 
 import scala.collection.mutable.HashMap
 import scala.concurrent.ExecutionContext.Implicits.global
