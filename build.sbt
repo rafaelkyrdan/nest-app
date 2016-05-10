@@ -16,6 +16,12 @@ libraryDependencies ++= Seq (
 )
 
 libraryDependencies += "io.spray" %% "spray-can" % "1.3.3"
+libraryDependencies += "io.spray" %% "spray-routing-shapeless2" % "1.3.3"
+libraryDependencies += "io.spray" %% "spray-testkit" % "1.3.3"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.12" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "2.3.13" % "test"
 libraryDependencies += "com.wandoulabs.akka" %% "spray-websocket" % "0.1.4"
+
 
 
