@@ -9,6 +9,8 @@ package nestapp
   * When messages comes - sends ti to all followers connected via WebSocketServer.
   */
 
+import java.util.Properties
+
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props, _}
 import akka.io.IO
 import nestapp.nest._
@@ -32,6 +34,23 @@ class AppActor(firebaseURL: String, nestToken: String) extends Actor with ActorL
     case m => log.info(m.toString)
   }
 
+}
+
+object AppActor {
+
+  /**
+    * Create Props for an actor of this type.
+    *
+    * @return a Props for creating this actor, which can then be further configured
+    *         (e.g. calling `.withDispatcher()` on it)
+    */
+
+  val properties = new Properties()
+  properties.load(this.getClass.getClassLoader.getResourceAsStream("credentials.txt"))
+  val firebaseURL = properties.getProperty("firebase-url")
+  val nestToken = properties.getProperty("nest-token")
+
+  def props(): Props = Props(new AppActor(firebaseURL, nestToken))
 }
 
 
