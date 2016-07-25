@@ -1,5 +1,5 @@
 # nest-app
-Inspired by Nest - the connected home.
+Demo project. Inspired by Nest - the connected home.
 
 ## What's it?
 Example of server-to-server integration between Nest and WebSocketServer.
